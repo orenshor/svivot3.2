@@ -13,10 +13,10 @@ var poolConfig = {
 
 // TODO: edit this
 var connectionConfig = {
-    userName: '',
-    password: '',
-    server: '',
-    options: { encrypt: true, database: '' }
+    userName: 'adminAss3',
+    password: 'Ass3svivot!',
+    server: 'webdevass3.database.windows.net',
+    options: { encrypt: true, database: 'Ass3dbSvivot' }
 };
 
 //create the pool
