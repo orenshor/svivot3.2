@@ -2,9 +2,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const app = express();
 var DButilsAzure = require('./DButils');
+var moment = require('moment');
 app.use(express.json());
 
-function login(req,res){
+function login(req, res) {
     if (req.body.username && req.body.password) {
         DButilsAzure.execQuery("SELECT * FROM Users WHERE Users.Username= '" + req.body.username + "' AND " + "Users.Password= '" + req.body.password + "'")
             .then(function (result) {
@@ -25,7 +26,8 @@ function login(req,res){
         res.status(401).send("Expected username and password!");
     }
 }
-function register(req,res){
+
+function register(req, res) {
     if (req.body.username && req.body.password && req.body.passQuestion && req.body.passAnswer && req.body.city &&
         req.body.country && req.body.email && req.body.firstName && req.body.lastName) {
         DButilsAzure.execQuery("INSERT INTO Users VALUES ('" + req.body.username + "', '" + req.body.password + "', '" + req.body.passQuestion + "', '" + req.body.passAnswer + "', '" + req.body.city + "', '" +
@@ -41,7 +43,8 @@ function register(req,res){
         res.status(401).send("Please insert all required fields!");
     }
 }
-function mostUpdatePois(req,res){
+
+function mostUpdatePois(req, res) {
     var username = req.decoded.username;
     DButilsAzure.execQuery("SELECT  TOP 2 POI.* FROM POI, CategoryOfUsers WHERE CategoryOfUsers.CategoryID = POI.CategoryID AND CategoryOfUsers.username='" + username + "' order by POI.Rank DESC")
         .then(function (result) {
@@ -52,7 +55,8 @@ function mostUpdatePois(req,res){
             res.send(err)
         })
 }
-function lastSvaedPois(req,res){
+
+function lastSvaedPois(req, res) {
     var username = req.decoded.username;
     DButilsAzure.execQuery("SELECT top 2 POI.* FROM POI, Favorite WHERE Favorite.NamePOI = POI.NamePOI AND Favorite.username='" + username + "' order by Favorite.indexForUser DESC")
         .then(function (result) {
@@ -64,25 +68,43 @@ function lastSvaedPois(req,res){
         })
 }
 
-function getAllFavorites(req, res){
+function getAllFavorites(req, res) {
     var username = req.decoded.username;
     DButilsAzure.execQuery("select POI.* from POI, Favorite where Favorite.username = '" + username + "' and Favorite.NamePOI = POI.NamePOI order by Favorite.indexForUser DESC")
-        .then(function (result) {res.send(result)})
+        .then(function (result) {
+            res.send(result)
+        })
         .catch(function (err) {
             console.log(err)
             res.send(err)
         })
 }
 
-function updateAllFavorites(req, res){
+function updateAllFavorites(req, res) {
     var username = req.decoded.username;
-    DButilsAzure.execQuery("DELETE FROM Favorite WHERE Favorite.username = '" + username + "';")
-        .then(function () {res.send()})
-        .catch(function (err) {
-            console.log(err)
-            res.send(err)
-        })
-    //for each (var row)
+    for (var row = 0; row < req.body.length; row++) {
+        if (!req.body[row].modDate && !req.body[row].NamePOI) {
+            console.log(req.body[row].modDate)
+            var date = moment(req.body[row].modDate, 'YYYY-MM-DD HH:mm:ss');
+            if (!date.isValid()) {
+                res.send("Invalid inputs. please enter a valid inputs.")
+            }
+        }
+    }
+    // DButilsAzure.execQuery("DELETE FROM Favorite WHERE Favorite.username = '" + username + "';")
+    //     .then(function () {res.send()})
+    //     .catch(function (err) {
+    //         console.log(err)
+    //         res.send(err)
+    //     })
+    for (var row = 0 ; row < req.body.length ; row++){
+        DButilsAzure.execQuery("insert into Favorite (username, NamePOI, indexForUser) VALUES ('" + username + "', '" + req.body[row].NamePOI + "', '"+ req.body[row].modDate +"');")
+            .then(function () {res.send()})
+            .catch(function (err) {
+                console.log(err)
+                res.send(err)
+            })
+    }
 
 }
 
@@ -91,5 +113,6 @@ module.exports.register = register;
 module.exports.mostUpdatePois = mostUpdatePois;
 module.exports.lastSvaedPois = lastSvaedPois
 module.exports.getAllFavorites = getAllFavorites
+module.exports.updateAllFavorites = updateAllFavorites
 
 
