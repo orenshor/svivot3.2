@@ -84,25 +84,30 @@ function getRandomPOI(req,res){
 
 }
 function RestorePassword(req,res){
-    if(req.body.userName && req.body.question && req.body.answer ) {
-        if(req.body.question.length != 0 || req.body.answer.length != 0){
-            DButilsAzure.execQuery("SELECT Password FROM Users WHERE Username='" + req.body.userName + "' AND PassQuestion='" + req.body.question + "' AND PassAnswer='" + req.body.answer+"'")
-                .then(function (result) {
-                    res.send(result)
-                    console.log(result);
-                })
-                .catch(function (err) {
-                    console.log(err)
-                    res.send(err)
-                })
+    var found = false;
+    for (var i=0; i<req.body[i].length && !found;i++){
+        if(req.body[i].userName && req.body[i].question && req.body[i].answer ) {
+            if(req.body[i].question.length != 0 || req.body[i].answer.length != 0){
+                DButilsAzure.execQuery("SELECT Password FROM Users WHERE Username='" + req.body[i].userName + "' AND PassQuestion='" + req.body[i].question+"'")
+                    .then(function (result) {
+                        found = true;
+                        res.send(result)
+                        console.log(result);
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                        res.send(err)
+                    })
+            }
+            else{
+                res.status(401).send("insert valid questions and answers!");
+            }
         }
         else{
-            res.status(401).send("insert valid question and answer!");
+            res.status(401).send("Expected all the right parameters! userName,Question and answer!");
         }
     }
-    else{
-        res.status(401).send("Expected all the right parameters! userName,Question and answer!");
-    }
+
 }
 
 module.exports.sortByCategory = sortByCategory;
