@@ -45,6 +45,8 @@ app.get('/orederByRank', function (req, res) { poiMoudles.orederByRank(req,res);
 
 app.get('/searchByName', function (req, res) { poiMoudles.searchByName(req,res); })
 
+app.put('/addRank', function (req, res) { poiMoudles.addRank(req,res); })
+
 
 
 

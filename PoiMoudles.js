@@ -35,6 +35,29 @@ function searchByName(req,res){
         })
 }
 
+function addRank(req,res){
+    if(req.body.myRank && req.body.namePoi) {
+        if(req.body.myRank <= 10) {
+            DButilsAzure.execQuery("UPDATE POI SET Rank = '" + req.body.myRank + "' WHERE NamePOI='" + req.body.namePoi + "'")
+                .then(function (result) {
+                    res.send(result)
+                })
+                .catch(function (err) {
+                    console.log(err)
+                    res.send(err)
+                })
+        }
+        else{
+            res.status(401).send("rank(myRank) need to be less than 10!");
+        }
+
+    }
+    else {
+        res.status(401).send("Expected new rank(myRank) and namePoi(namePoi)!");
+    }
+}
+
 module.exports.sortByCategory = sortByCategory;
 module.exports.orederByRank = orederByRank;
 module.exports.searchByName = searchByName;
+module.exports.addRank = addRank;
