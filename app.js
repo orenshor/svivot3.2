@@ -45,6 +45,13 @@ app.get('/orederByRank', function (req, res) { poiMoudles.orederByRank(req,res);
 
 app.get('/searchByName', function (req, res) { poiMoudles.searchByName(req,res); })
 
+app.put('/addRank', function (req, res) { poiMoudles.addRank(req,res); })
+
+app.put('/addReview', function (req, res) { poiMoudles.addReview(req,res); })
+
+app.get('/getRandomPOI', function (req, res) { poiMoudles.getRandomPOI(req,res); })
+
+app.get('/RestorePassword',function(req,res){ poiMoudles.RestorePassword(req,res); })
 
 
 
