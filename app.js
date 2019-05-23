@@ -94,8 +94,8 @@ app.post('/private/lastSavedPois', function (req, res) {
 })
 
 
-app.post('/sortByCategory', function (req, res) {
-    DButilsAzure.execQuery("SELECT POI.* FROM POI WHERE POI.CategoryID ='" + req.body.categoryID + "'")
+app.get('/sortByCategory', function (req, res) {
+    DButilsAzure.execQuery("SELECT POI.* FROM POI WHERE POI.CategoryID ='" + req.body.categoryID + "' ORDER BY POI.Rank DESC")
         .then(function (result) {
             res.send(result)
         })
@@ -105,3 +105,24 @@ app.post('/sortByCategory', function (req, res) {
         })
 })
 
+app.get('/orederByRank', function (req, res) {
+    DButilsAzure.execQuery("SELECT POI.* FROM POI order by POI.Rank DESC")
+        .then(function (result) {
+            res.send(result)
+        })
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
+})
+
+app.get('/searchByName', function (req, res) {
+    DButilsAzure.execQuery("SELECT POI.* FROM POI WHERE POI.NamePOI = '"+ req.body.name_POI +"'")
+        .then(function (result) {
+            res.send(result)
+        })
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
+})
