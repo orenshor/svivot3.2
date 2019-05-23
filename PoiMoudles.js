@@ -57,7 +57,26 @@ function addRank(req,res){
     }
 }
 
+function addReview(req,res){
+    if(req.body.myReview && req.body.namePoi) {
+            DButilsAzure.execQuery("UPDATE Comments SET Details = '" + req.body.myReview + "' WHERE NamePOI='" + req.body.namePoi + "'")
+                .then(function (result) {
+                    res.send(result)
+                })
+                .catch(function (err) {
+                    console.log(err)
+                    res.send(err)
+                })
+
+    }
+    else {
+        res.status(401).send("Expected new review(myReview) and namePoi(namePoi)!");
+    }
+}
+
 module.exports.sortByCategory = sortByCategory;
 module.exports.orederByRank = orederByRank;
 module.exports.searchByName = searchByName;
 module.exports.addRank = addRank;
+module.exports.addReview = addReview;
+

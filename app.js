@@ -47,6 +47,8 @@ app.get('/searchByName', function (req, res) { poiMoudles.searchByName(req,res);
 
 app.put('/addRank', function (req, res) { poiMoudles.addRank(req,res); })
 
+app.put('/addReview', function (req, res) { poiMoudles.addReview(req,res); })
+
 
 
 
