@@ -24,11 +24,6 @@ app.post('/login', function (req, res) { // Login and Hello
                 } else {
                     res.status(401).send("Access denied. No such username or password.");
                 }
-
-
-
-
-
             })
             .catch(function (err) {
                 console.log(err)
@@ -41,6 +36,20 @@ app.post('/login', function (req, res) { // Login and Hello
 
 // {"userName": String, "password": String, "passQuestion":{"question": String, "answer": String},\
 // "city": String, "country": String, "e-mail": String, "firstName" :String, "lastName": String, "fieldsOfInterests": []}
+
+app.use('/private', function(req, res, next){
+    const token = req.header("x-auth-token");
+    // no token
+    if (!token) res.status(401).send("Access denied. No token provided.");
+    // verify token
+    try {
+        const decoded = jwt.verify(token, secret);
+        req.decoded = decoded;
+    }catch (exception) {
+        res.status(400).send("Invalid token.");
+    }
+    next()
+})
 
 app.post('/register', function (req, res) {
     if(req.body.username && req.body.password && req.body.passQuestion && req.body.passAnswer && req.body.city &&
@@ -60,21 +69,26 @@ app.post('/register', function (req, res) {
 
 })
 
-app.post('/mostUpdatedPois', function (req, res) {
-    const token = req.header("x-auth-token");
-    // no token
-    if (!token) res.status(401).send("Access denied. No token provided.");
-    // verify token
-    try {
-        const decoded = jwt.verify(token, secret);
-        req.decoded = decoded;
-    }catch (exception) {
-        res.status(400).send("Invalid token.");
-    }
+app.post('/private/mostUpdatedPois', function (req, res) {
     var username = req.decoded.username;
-
-
-    DButilsAzure.execQuery("SELECT * FROM Users WHERE Users.Username= '" + req.body.username + "' AND " + "Users.Password= '" + req.body.password + "'")
+    DButilsAzure.execQuery("SELECT  TOP 2 POI.* FROM POI, FoiOfUsers WHERE FoiOfUsers.IdFOI = POI.IdFOI AND FoiOfUsers.username='"+ username+"' order by POI.Rank DESC")
+        .then(function (result) {
+            res.send(result)
+    })
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
 })
 
-
+app.post('/private/lastSavedPois', function (req, res) {
+    var username = req.decoded.username;
+    DButilsAzure.execQuery("SELECT top 2 POI.* FROM POI, Favorite WHERE Favorite.NamePOI = POI.NamePOI AND Favorite.username='"+ username+"' order by Favorite.indexForUser DESC")
+        .then(function (result) {
+            res.send(result)
+        })
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
+})
