@@ -32,12 +32,19 @@ app.post('/private/mostUpdatedPois', function (req, res) { userMoudles.mostUpdat
 
 app.post('/private/lastSavedPois', function (req, res) { userMoudles.lastSvaedPois(req,res); })
 
+app.post('/private/getAllFavorites', function (req, res) { userMoudles.getAllFavorites(req,res); })
+
+app.put('/private/updateAllFavorites', function (req, res) { userMoudles.updateAllFavorites(req,res); })
+
+
+
 // POIS MOUDLES
-app.get('/sortByCategory', function (req, res) { poiMoudles.sortByCatergory(req,res); })
+app.get('/sortByCategory', function (req, res) { poiMoudles.sortByCategory(req,res); })
 
 app.get('/orederByRank', function (req, res) { poiMoudles.orederByRank(req,res); })
 
 app.get('/searchByName', function (req, res) { poiMoudles.searchByName(req,res); })
+
 
 
 

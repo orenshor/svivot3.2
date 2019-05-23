@@ -64,10 +64,32 @@ function lastSvaedPois(req,res){
         })
 }
 
+function getAllFavorites(req, res){
+    var username = req.decoded.username;
+    DButilsAzure.execQuery("select POI.* from POI, Favorite where Favorite.username = '" + username + "' and Favorite.NamePOI = POI.NamePOI order by Favorite.indexForUser DESC")
+        .then(function (result) {res.send(result)})
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
+}
+
+function updateAllFavorites(req, res){
+    var username = req.decoded.username;
+    DButilsAzure.execQuery("DELETE FROM Favorite WHERE Favorite.username = '" + username + "';")
+        .then(function () {res.send()})
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
+    //for each (var row)
+
+}
 
 module.exports.login = login;
 module.exports.register = register;
 module.exports.mostUpdatePois = mostUpdatePois;
 module.exports.lastSvaedPois = lastSvaedPois
+module.exports.getAllFavorites = getAllFavorites
 
 
