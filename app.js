@@ -51,7 +51,7 @@ app.put('/addReview', function (req, res) { poiMoudles.addReview(req,res); })
 
 app.get('/getRandomPOI', function (req, res) { poiMoudles.getRandomPOI(req,res); })
 
-app.get('/RestorePassword',function(req,res){ poiMoudles.RestorePassword(req,res); })
+app.post('/RestorePassword',function(req,res){ poiMoudles.RestorePassword(req,res); })
 
 
 
