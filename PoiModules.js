@@ -17,7 +17,7 @@ function sortByCategory(req, res) {
         })
 }
 
-function orederByRank(req, res) {
+function orderByRank(req, res) {
     DButilsAzure.execQuery("SELECT POI.* " +
         "FROM POI " +
         "ORDER BY POI.Rank DESC")
@@ -33,7 +33,7 @@ function orederByRank(req, res) {
 function searchByName(req, res) {
     DButilsAzure.execQuery("SELECT POI.* " +
         "FROM POI " +
-        "WHERE POI.NamePOI = '" + req.body.name_POI + "'")
+        "WHERE POI.NamePOI = '" + req.body.NamePOI + "'")
         .then(function (result) {
             res.send(result)
         })
@@ -46,11 +46,22 @@ function searchByName(req, res) {
 function addRank(req, res) {
     if (req.body.myRank && req.body.namePoi) {
         if (req.body.myRank <= 10) {
-            DButilsAzure.execQuery("UPDATE POI " +
-                "SET Rank = '" + req.body.myRank + "' " +
-                "WHERE NamePOI='" + req.body.namePoi + "'")
+            DButilsAzure.execQuery("SELECT rank, numOfRankers FROM POI WHERE NamePOI = '"+ req.body.namePoi +"'")
                 .then(function (result) {
-                    res.send(result)
+                    var newRank = ((result[0].rank * result[0].numOfRankers) + parseInt(req.body.myRank))/ (result[0].numOfRankers + 1)
+                    DButilsAzure.execQuery("UPDATE POI " +
+                        "SET rank =" + newRank +
+                        "WHERE NamePOI = '"+ req.body.namePoi +"'"+
+                        "UPDATE POI " +
+                        "SET numOfRankers = numOfRankers + 1 " +
+                        "WHERE NamePOI = '" + req.body.namePoi +"'")
+                        .then(function () {
+                            res.send("Rank updated")
+                        })
+                        .catch(function (err) {
+                            console.log(err)
+                            res.send(err)
+                        })
                 })
                 .catch(function (err) {
                     console.log(err)
@@ -64,13 +75,41 @@ function addRank(req, res) {
     }
 }
 
+function addOneView(req, res) {
+    if (req.body.namePoi) {
+            DButilsAzure.execQuery("UPDATE POI " +
+                "SET numOfViews = numOfViews + 1 " +
+                "WHERE NamePOI = '"+ req.body.namePoi +"'")
+                .then(function () {
+                    res.send("numOfViews updated.")
+                })
+                .catch(function (err) {
+                    console.log(err)
+                    res.send(err)
+                })
+    } else {
+        res.status(401).send("Expected namePoi(namePoi)!");
+    }
+}
+
 function addReview(req, res) {
+    var username = req.decoded.username;
     if (req.body.myReview && req.body.namePoi) {
-        DButilsAzure.execQuery("UPDATE Comments " +
-            "SET Details = '" + req.body.myReview + "' " +
-            "WHERE NamePOI='" + req.body.namePoi + "'")
-            .then(function (result) {
-                res.send(result)
+        DButilsAzure.execQuery("SELECT MAX(CommentID) AS maxID FROM Comments;")
+            .then(function (maxID) {
+                var id = parseInt(maxID[0].maxID) + 1
+                console.log(maxID[0].maxID)
+                var rightNow = new Date().toLocaleString().replace(', ', ' ').replace(/PM AM\..*$/, '');;
+                console.log(rightNow)
+                DButilsAzure.execQuery("INSERT INTO Comments VALUES ('" + id +"', '" + req.body.myReview +"', '"+ username +
+                    "', '" + req.body.namePoi + "', '" + rightNow +"');")
+                    .then(function () {
+                        res.send("Review added.")
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                        res.send(err)
+                    })
             })
             .catch(function (err) {
                 console.log(err)
@@ -96,47 +135,14 @@ function getRandomPOI(req, res) {
 
 }
 
-function RestorePassword(req, res) {
-    if (req.body.username && req.body.question && req.body.answer) {
-        DButilsAzure.execQuery("SELECT PassQuestion " +
-            "FROM Users " +
-            "WHERE Username='" + req.body.username + "'")
-            .then(function (result) {
-                for (var i = 0; i < result.length; i++) {
-                    //console.log(result[0].PassQuestion)
-                    var QA = JSON.parse(result[0].PassQuestion);
-                    console.log(QA[0].q)
-                    if (QA[i].q == req.body.question && QA[i].ans == req.body.answer) {
-                        DButilsAzure.execQuery("SELECT password " +
-                            "FROM Users " +
-                            "WHERE Username='" + req.body.username + "'")
-                            .then(function (result2) {
-                                res.send(result2)
-                                console.log(result2);
-                            })
-                            .catch(function (err) {
-                                console.log(err)
-                                res.send(err)
-                            })
-                    } else {
-                        res.status(401).send("The answer doesn't match");
-                    }
-                }
-            })
-            .catch(function (err) {
-                console.log(err)
-                res.send(err)
-            })
-    }else{
-        res.status(401).send("Expected all the right parameters! userName,Question and answer!");
-    }
-}
+
     module.exports.sortByCategory = sortByCategory;
-    module.exports.orederByRank = orederByRank;
+    module.exports.orderByRank = orderByRank;
     module.exports.searchByName = searchByName;
     module.exports.addRank = addRank;
+    module.exports.addOneView = addOneView;
     module.exports.addReview = addReview;
     module.exports.getRandomPOI = getRandomPOI;
-    module.exports.RestorePassword = RestorePassword;
+
 
 

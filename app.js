@@ -6,11 +6,11 @@ app.use(express.json());
 
 var port = 3000;
 secret = "IlayOren";
-const userMoudles = require("./UsersMoudles");
-const poiMoudles = require("./PoiMoudles");
+const userModules = require("./UsersModules");
+const poiModules = require("./PoiModules");
 
 // USERS MOUDLES
-app.post('/login', function (req, res) { userMoudles.login(req,res);})
+app.post('/login', function (req, res) { userModules.login(req,res);})
 
 app.use('/private', function (req, res, next) {
     const token = req.header("x-auth-token");
@@ -26,32 +26,36 @@ app.use('/private', function (req, res, next) {
     next()
 })
 
-app.post('/register', function (req, res) { userMoudles.register(req,res);})
+app.post('/register', function (req, res) { userModules.register(req,res);})
 
-app.post('/private/mostUpdatedPois', function (req, res) { userMoudles.mostUpdatePois(req,res); })
+app.post('/private/mostUpdatedPois', function (req, res) { userModules.mostUpdatePois(req,res); })
 
-app.post('/private/lastSavedPois', function (req, res) { userMoudles.lastSvaedPois(req,res); })
+app.post('/private/lastSavedPois', function (req, res) { userModules.lastSavedPois(req,res); })
 
-app.post('/private/getAllFavorites', function (req, res) { userMoudles.getAllFavorites(req,res); })
+app.post('/private/getAllFavorites', function (req, res) { userModules.getAllFavorites(req,res); })
 
-app.put('/private/updateAllFavorites', function (req, res) { userMoudles.updateAllFavorites(req,res); })
+app.put('/private/updateAllFavorites', function (req, res) { userModules.updateAllFavorites(req,res); })
+
+app.post('/RestorePassword',function(req,res){ userModules.RestorePassword(req,res); })
 
 
 
 // POIS MOUDLES
-app.get('/sortByCategory', function (req, res) { poiMoudles.sortByCategory(req,res); })
+app.get('/sortByCategory', function (req, res) { poiModules.sortByCategory(req,res); })
 
-app.get('/orederByRank', function (req, res) { poiMoudles.orederByRank(req,res); })
+app.get('/orderByRank', function (req, res) { poiModules.orderByRank(req,res); })
 
-app.get('/searchByName', function (req, res) { poiMoudles.searchByName(req,res); })
+app.get('/searchByName', function (req, res) { poiModules.searchByName(req,res); })
 
-app.put('/addRank', function (req, res) { poiMoudles.addRank(req,res); })
+app.put('/addRank', function (req, res) { poiModules.addRank(req,res); })
 
-app.put('/addReview', function (req, res) { poiMoudles.addReview(req,res); })
+app.put('/addOneView', function (req, res) { poiModules.addOneView(req,res); })
 
-app.get('/getRandomPOI', function (req, res) { poiMoudles.getRandomPOI(req,res); })
+app.put('/private/addReview', function (req, res) { poiModules.addReview(req,res); })
 
-app.post('/RestorePassword',function(req,res){ poiMoudles.RestorePassword(req,res); })
+app.get('/getRandomPOI', function (req, res) { poiModules.getRandomPOI(req,res); })
+
+
 
 
 
