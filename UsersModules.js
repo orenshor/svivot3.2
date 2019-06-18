@@ -23,7 +23,7 @@ function login(req, res) {
             })
             .catch(function (err) {
                 console.log(err)
-                res.send(err)
+                res.status(404).send("No such username or password!");
             })
     } else {
         res.status(401).send("Expected username and password!");
@@ -33,7 +33,7 @@ function login(req, res) {
 
 function register(req, res) {
     if (/^[a-zA-Z]+$/.test(req.body.username) && req.body.username.length >= 3 && req.body.username.length <= 8
-        && /^[a-zA-Z0-9]+$/.test(req.body.password) && req.body.password.length >= 5 && req.body.password.length <= 10
+        && /(^\d+[a-zA-Z]+[a-zA-Z0-9]*$|^[a-zA-Z]+\d+[a-zA-Z0-9]*$)/.test(req.body.password) && req.body.password.length >= 5 && req.body.password.length <= 10
         && req.body.passQuestion.length >= 2 && req.body.city && req.body.country &&
         /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(req.body.email)
         && req.body.firstName && req.body.lastName && req.body.categories.length >= 2) {
@@ -59,14 +59,14 @@ function register(req, res) {
                                             })
                                             .catch(function (err) {
                                                 console.log(err)
-                                                res.send(err)
+                                                res.status(503).send("Category insert faild.");
                                             })
                                     }
-                                    res.send("User made.")
+                                    res.status(200).send("User made");
                                 })
                                 .catch(function (err) {
                                     console.log(err)
-                                    res.send(err)
+                                    res.status(503).send("User insert faild.");
                                 })
                         } else {
                             res.status(400).send("Invalid country.");
