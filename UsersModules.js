@@ -114,7 +114,7 @@ function lastSavedPois(req, res) {
 
 function getAllFavorites(req, res) {
     var username = req.decoded.username;
-    DButilsAzure.execQuery("select POI.* from POI, Favorite " +
+    DButilsAzure.execQuery("select POI.*, Favorite.indexForUser from POI, Favorite " +
         "WHERE Favorite.username = '" + username + "' and Favorite.NamePOI = POI.NamePOI " +
         "ORDER BY Favorite.indexForUser DESC")
         .then(function (result) {
