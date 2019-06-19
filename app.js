@@ -2,7 +2,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const app = express();
 var DButilsAzure = require('./DButils');
+var cors = require('cors');
+
 app.use(express.json());
+app.use(cors());
 
 var port = 3000;
 secret = "IlayOren";
