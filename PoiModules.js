@@ -120,6 +120,19 @@ function addReview(req, res) {
     }
 }
 
+function getLastReviews(req,res) {
+    DButilsAzure.execQuery("SELECT Top 2 Comments.* " +
+        "FROM Comments " +
+        "WHERE Comments.namePOI = '" + req.body.NamePOI + "'")
+        .then(function (result) {
+            res.send(result)
+        })
+        .catch(function (err) {
+            console.log(err)
+            res.status(401).send("Problem in getLastPOI!");
+        })
+}
+
 function getRandomPOI(req, res) {
     DButilsAzure.execQuery("SELECT TOP 3 * " +
         "FROM POI " +
@@ -141,6 +154,7 @@ function getRandomPOI(req, res) {
     module.exports.searchByName = searchByName;
     module.exports.addRank = addRank;
     module.exports.addOneView = addOneView;
+    module.exports.getLastReviews = getLastReviews;
     module.exports.addReview = addReview;
     module.exports.getRandomPOI = getRandomPOI;
 

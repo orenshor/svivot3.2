@@ -52,7 +52,7 @@ app.post('/RestorePassword',function(req,res){ userModules.RestorePassword(req,r
 
 
 // POIS MOUDLES
-app.get('/sortByCategory', function (req, res) { poiModules.sortByCategory(req,res); })
+app.post('/sortByCategory', function (req, res) { poiModules.sortByCategory(req,res); })
 
 app.get('/orderByRank', function (req, res) { poiModules.orderByRank(req,res); })
 
@@ -61,6 +61,8 @@ app.get('/searchByName', function (req, res) { poiModules.searchByName(req,res);
 app.put('/addRank', function (req, res) { poiModules.addRank(req,res); })
 
 app.put('/addOneView', function (req, res) { poiModules.addOneView(req,res); })
+
+app.post('/getLastReviews', function (req, res) { poiModules.getLastReviews(req,res); })
 
 app.put('/private/addReview', function (req, res) { poiModules.addReview(req,res); })
 
