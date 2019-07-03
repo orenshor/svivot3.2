@@ -128,6 +128,16 @@ function getAllFavorites(req, res) {
 
 function updateAllFavorites(req, res) {
     var username = req.decoded.username;
+    if(req.body.length == 0){
+        DButilsAzure.execQuery("DELETE FROM Favorite " +
+            "WHERE Favorite.username = '" + username + "';")
+            .then(function () {
+            })
+            .catch(function (err) {
+                console.log(err)
+                res.send(err)
+            })
+    }
     for (var row = 0; row < req.body.length; row++) {
         if (req.body[row].modDate && req.body[row].NamePOI) {
            // console.log(req.body[row].modDate)
