@@ -130,7 +130,7 @@ function updateAllFavorites(req, res) {
     var username = req.decoded.username;
     for (var row = 0; row < req.body.length; row++) {
         if (req.body[row].modDate && req.body[row].NamePOI) {
-            console.log(req.body[row].modDate)
+           // console.log(req.body[row].modDate)
             var date = moment(req.body[row].modDate, 'YYYY-MM-DD HH:mm:ss');
             if (!date.isValid()) {
                 res.send("Invalid date. please enter a valid date.")

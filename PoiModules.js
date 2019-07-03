@@ -98,9 +98,9 @@ function addReview(req, res) {
         DButilsAzure.execQuery("SELECT MAX(CommentID) AS maxID FROM Comments;")
             .then(function (maxID) {
                 var id = parseInt(maxID[0].maxID) + 1
-                console.log(maxID[0].maxID)
+                //console.log(maxID[0].maxID)
                 var rightNow = new Date().toLocaleString().replace(', ', ' ').replace(/PM AM\..*$/, '');
-                console.log(rightNow)
+                //console.log(rightNow)
                 DButilsAzure.execQuery("INSERT INTO Comments VALUES ('" + id +"', '" + req.body.myReview +"', '"+ username +
                     "', '" + req.body.namePoi + "', '" + rightNow +"');")
                     .then(function () {
